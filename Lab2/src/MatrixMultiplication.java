@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MatrixMultiplication {
 
@@ -53,6 +56,7 @@ public class MatrixMultiplication {
         numberThreads = in.nextInt();
 
         List<MyThread> threads = new ArrayList<>();
+        ExecutorService executorService = Executors.newFixedThreadPool(numberThreads);
 
         i = 0;
         while(i<numberThreads) {
@@ -67,8 +71,16 @@ public class MatrixMultiplication {
         }
 
         long startTime = System.currentTimeMillis();
-        threads.forEach(MyThread::run);
+//        threads.forEach(MyThread::run);
+        threads.forEach(executorService::execute);
 
+
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime);
 
