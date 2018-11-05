@@ -63,9 +63,6 @@ class AddTwoMatrix {
                 System.out.print(sum[c][d] + "\t");
 
             System.out.println();
-
-
-            
         }
     }
 }

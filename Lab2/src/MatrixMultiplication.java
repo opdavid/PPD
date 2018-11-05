@@ -1,10 +1,12 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class MatrixMultiplication {
 
     public static void run() {
 
-        int m, n, c, d;
+        int m, n, c, d,numberThreads;
         Scanner in = new Scanner(System.in);
 
         System.out.println("Enter the number of rows and columns of matrix");
@@ -37,16 +39,42 @@ public class MatrixMultiplication {
         int[][] myMatrixC = new int[rowsA][colsB];
         //start across rows of A
 
-        for (i = 0; i < rowsA; i++)
-        {
-            //work across cols of B
-            for (j = 0; j < colsB; j++) {
-                //now complete the addition and multiplication
-                for (k = 0; k < colsA; k++) {
-                    myMatrixC[i][j] += myMatrixA[i][k] * myMatrixB[k][j];
-                }
-            }
+//        for (i = 0; i < rowsA; i++)
+//        {
+//            //work across cols of B
+//            for (j = 0; j < colsB; j++) {
+//                //now complete the addition and multiplication
+//                for (k = 0; k < colsA; k++) {
+//                    myMatrixC[i][j] += myMatrixA[i][k] * myMatrixB[k][j];
+//                }
+//            }
+//        }
+        System.out.println("Enter the no of threads");
+        numberThreads = in.nextInt();
+
+        List<MyThread> threads = new ArrayList<>();
+
+        i = 0;
+        while(i<numberThreads) {
+            MyThread t = new MyThread(myMatrixA, myMatrixB, myMatrixC, i);
+            threads.add(t);
+            i++;
         }
+        while(i<rowsA){
+            System.out.println(i);
+            threads.get(i%numberThreads).addIdx(i);
+            i++;
+        }
+
+        long startTime = System.currentTimeMillis();
+        threads.forEach(MyThread::run);
+
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime);
+
+        System.out.println("Operation took: " + duration + " milliseconds");
+
+
 
         System.out.println("Multiplying A and B equals: ");
         for(m = 0; m < myMatrixC.length; m++) {
