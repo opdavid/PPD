@@ -3,6 +3,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+<<<<<<< HEAD
+=======
+import java.util.concurrent.TimeUnit;
+>>>>>>> 1c42af2f6392ffa7e6afa6b7d75601c773fd6a93
 
 
 class AddTwoMatrix {
@@ -34,7 +38,9 @@ class AddTwoMatrix {
         numberThreads = in.nextInt();
 
         List<MyThread> threads = new ArrayList<>();
+
         ExecutorService executor = Executors.newFixedThreadPool(numberThreads);
+
 
         i = 0;
         while(i<numberThreads) {
@@ -49,7 +55,17 @@ class AddTwoMatrix {
         }
 
         long startTime = System.currentTimeMillis();
+
         threads.forEach(executor::execute);
+
+//        threads.forEach(MyThread::run);
+
+        executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime);

@@ -5,6 +5,8 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import java.util.concurrent.TimeUnit;
+
 public class MatrixMultiplication {
 
     public static void run() throws InterruptedException {
@@ -80,6 +82,7 @@ public class MatrixMultiplication {
         }
 
         long startTime = System.currentTimeMillis();
+
         threads.forEach(executor::execute);
         threads2.forEach(executor2::execute);
 
@@ -97,6 +100,14 @@ public class MatrixMultiplication {
 //        consumer.join();
 
 
+        executor.shutdown();
+        executor2.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            executor2.awaitTermination(Long.MAX_VALUE,TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime);
         System.out.println("Operation took: " + duration + " milliseconds");
