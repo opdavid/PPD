@@ -3,8 +3,11 @@ import java.util.List;
 
 public class MyThread implements Runnable {
 
-    private int[][] first,second,sum;
+    private int[][] first, second, sum;
     private List<Integer> idx = new ArrayList<>();
+
+    public MyThread() {
+    }
 
     public MyThread(int[][] first, int[][] second, int[][] sum, int i) {
         this.first = first;
@@ -13,16 +16,26 @@ public class MyThread implements Runnable {
         addIdx(i);
     }
 
-    public void addIdx(int i){
+    public void addIdx(int i) {
         this.idx.add(i);
     }
 
     @Override
     public void run() {
-        for(Integer i:idx) {
+
+        /**
+         * For sum
+         */
+//        for (Integer i : idx) {
 //            for (int j = 0; j < first[0].length; j++) {
 //                sum[i][j] = first[i][j] + second[i][j];
 //            }
+//        }
+
+        /**
+         * For multiplication
+         */
+        for (Integer i : idx) {
             for (int j = 0; j < second[0].length; j++) {
                 //now complete the addition and multiplication
                 for (int k = 0; k < first[0].length; k++) {
