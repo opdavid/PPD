@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +32,9 @@ public class Producer extends Thread {
                     for (int k = 0; k < first[0].length; k++) {
                         sum[i][j] += first[i][k] * second[k][j];
                     }
-                    queue.add(sum[i][j]);
                 }
+                queue.add(i);
             }
-            queue.add(null);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

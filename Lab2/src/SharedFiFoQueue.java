@@ -1,15 +1,13 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class SharedFiFoQueue {
-    private Object[] elems;
-
-    private int current = 0;
-
-    private int placeIndex = 0;
-
-    private int removeIndex = 0;
+    private Queue<Object> elems;
+    private int counter = 0;
+    private final int capacity;
 
     private final Lock lock = new ReentrantLock();
 
@@ -18,45 +16,46 @@ public class SharedFiFoQueue {
     private final Condition isFull = lock.newCondition();
 
 
+
     public SharedFiFoQueue(int capacity) {
-        this.elems = new Object[capacity];
+        this.elems = new LinkedList<>();
+        this.capacity = capacity;
     }
 
-    public void add(Object elem) throws InterruptedException {
+    public synchronized void add(Object elem) throws InterruptedException {
+
         lock.lock();
-        while (current >= elems.length)
-            isFull.await();
-
-        elems[placeIndex] = elem;
-
-        //We need the modulo, in order to avoid going out of bounds.
-        placeIndex = (placeIndex + 1) % elems.length;
-
-        ++current;
+        elems.add(elem);
+        System.out.println("add: " +counter);
+        notifyAll();
         //Notify the consumer that there is data available.
         isEmpty.signal();
-
+        ++counter;
         lock.unlock();
     }
 
-    public Object remove() throws InterruptedException {
+    public synchronized Object remove() throws InterruptedException {
         Object elem;
-
         lock.lock();
-        while (current <= 0)
+
+        while (this.elems.isEmpty())
             isEmpty.await();
 
-        elem = elems[removeIndex];
+        System.out.println("remove: "+ counter);
 
-        //We need the modulo, in order to avoid going out of bounds.
-        removeIndex = (removeIndex + 1) % elems.length;
+        if(counter == this.capacity) {
+            System.out.println("asssa");
+            lock.unlock();
+            return null;
+        }
 
-        --current;
+        elem = this.elems.poll();
 
-        //Notify the producer that there is space available.
-        isFull.signal();
+//        isFull.signal();
+        notifyAll();
 
         lock.unlock();
+
         return elem;
     }
 }

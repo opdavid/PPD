@@ -22,6 +22,7 @@ public class MatrixMultiplication {
         int myMatrixA[][] = new int[m][m];
         int myMatrixB[][] = new int[m][m];
         int myMatrixC[][] = new int[m][m];
+
         int myMatrixD[][] = new int[m][m];
         int myMatrixE[][] = new int[m][m];
         int myMatrixQ[][] = new int[m][m];
@@ -72,12 +73,8 @@ public class MatrixMultiplication {
 
         i = 0;
         while (i < numberThreads2) {
-            Consumer t = new Consumer(myMatrixC, myMatrixE, i, sharedQueue);
+            Consumer t = new Consumer(myMatrixD, myMatrixC, myMatrixE, sharedQueue);
             threads2.add(t);
-            i++;
-        }
-        while (i < m) {
-            threads.get(i % numberThreads2).addIdx(i);
             i++;
         }
 
@@ -86,18 +83,6 @@ public class MatrixMultiplication {
         threads.forEach(executor::execute);
         threads2.forEach(executor2::execute);
 
-
-        //Create a producer and a consumer.
-//        Thread producer = new Producer(myMatrixA, myMatrixB, myMatrixC, i, sharedQueue);
-//        Thread consumer = new Consumer(sharedQueue);
-
-        //Start both threads.
-//        producer.start();
-//        consumer.start();
-
-        //Wait for both threads to terminate.
-//        producer.join();
-//        consumer.join();
 
 
         executor.shutdown();
@@ -112,11 +97,18 @@ public class MatrixMultiplication {
         long duration = (endTime - startTime);
         System.out.println("Operation took: " + duration + " milliseconds");
 
-        System.out.println("Multiplying A and B equals: ");
+        System.out.println("Multiplying A and B and C equals: ");
         for (i = 0; i<m; i++) {
             for (int j = 0; j < myMatrixB[0].length; j++) {
                 for (int k = 0; k < myMatrixA[0].length; k++) {
-                    myMatrixQ[i][j] += myMatrixA[i][k] * myMatrixB[k][j];
+                    myMatrixD[i][j] += myMatrixA[i][k] * myMatrixB[k][j];
+                }
+            }
+        }
+        for (i = 0; i<m; i++) {
+            for (int j = 0; j < myMatrixD[0].length; j++) {
+                for (int k = 0; k < myMatrixC[0].length; k++) {
+                    myMatrixQ[i][j] += myMatrixD[i][k] * myMatrixC[k][j];
                 }
             }
         }
@@ -128,6 +120,8 @@ public class MatrixMultiplication {
             System.out.println();
         }
 
+        System.out.println();
+        System.out.println();
 
         for(m = 0; m < myMatrixD.length; m++) {
             for( n = 0; n < myMatrixD[0].length; n++) {

@@ -1,45 +1,38 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class Consumer extends Thread {
 
-    private int[][] first, sum;
-    private List<Integer> idx = new ArrayList<>();
+    private int[][] first;
+    private int[][] second, sum;
 
-    private int total = 0;
     private final SharedFiFoQueue queue;
 
 
-    public Consumer(int[][] first, int[][] sum, int i, SharedFiFoQueue queue) {
+    public Consumer(int[][] first, int[][] second, int[][] sum, SharedFiFoQueue queue) {
         this.first = first;
         this.sum = sum;
+        this.second = second;
         this.queue = queue;
-        addIdx(i);
-    }
-
-    public void addIdx(int i) {
-        this.idx.add(i);
     }
 
     @Override
     public void run() {
+        Object o;
+        int i;
         try {
-            do {
-                Object obj = queue.remove();
+            while ( (o = queue.remove()) != null){
+                System.out.println("consumer: " + o);
+                i = (int) o;
 
-                if (obj == null)
-                    break;
-
-                System.out.println("[Consumer] Read the element: " + obj.toString());
-            } while (true);
-
+                for (int j = 0; j < second[0].length; j++) {
+                    //now complete the addition and multiplication
+                    for (int k = 0; k < first[0].length; k++) {
+                        sum[i][j] += first[i][k] * second[k][j];
+                    }
+                }
+            }
         } catch (InterruptedException ex) {
-            System.err.println("An InterruptedException was caught: " + ex.getMessage());
+            System.out.println("An InterruptedException was caught: " + ex.getMessage());
             ex.printStackTrace();
         }
-        System.out.println("\n[Consumer] " + total + " distinct words have been read...");
     }
 
 }

@@ -3,10 +3,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-<<<<<<< HEAD
-=======
+
 import java.util.concurrent.TimeUnit;
->>>>>>> 1c42af2f6392ffa7e6afa6b7d75601c773fd6a93
+
 
 
 class AddTwoMatrix {
