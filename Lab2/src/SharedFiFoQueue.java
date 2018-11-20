@@ -6,7 +6,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SharedFiFoQueue {
     private Queue<Object> elems;
+
+    private volatile boolean available = false;
     private int counter = 0;
+    private int removeidx = 0;
     private final int capacity;
 
     private final Lock lock = new ReentrantLock();
@@ -16,43 +19,45 @@ public class SharedFiFoQueue {
     private final Condition isFull = lock.newCondition();
 
 
-
     public SharedFiFoQueue(int capacity) {
         this.elems = new LinkedList<>();
         this.capacity = capacity;
     }
 
-    public synchronized void add(Object elem) throws InterruptedException {
+    public void add(Object elem) throws InterruptedException {
 
         lock.lock();
+        while (available) {
+            isFull.await();
+        }
+
         elems.add(elem);
-        System.out.println("add: " +counter);
-        notifyAll();
+//        available = true;
+
         //Notify the consumer that there is data available.
         isEmpty.signal();
         ++counter;
         lock.unlock();
     }
 
-    public synchronized Object remove() throws InterruptedException {
+    public Object remove() throws InterruptedException {
         Object elem;
         lock.lock();
 
-        while (this.elems.isEmpty())
+        while (this.elems.isEmpty() && removeidx != this.capacity) {
             isEmpty.await();
+        }
 
-        System.out.println("remove: "+ counter);
-
-        if(counter == this.capacity) {
-            System.out.println("asssa");
+        if (removeidx == this.capacity && removeidx == counter) {
             lock.unlock();
             return null;
         }
 
         elem = this.elems.poll();
+        removeidx++;
+        available = false;
 
-//        isFull.signal();
-        notifyAll();
+        isFull.signal();
 
         lock.unlock();
 

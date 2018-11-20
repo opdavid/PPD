@@ -25,6 +25,8 @@ public class MatrixMultiplication {
 
         int myMatrixD[][] = new int[m][m];
         int myMatrixE[][] = new int[m][m];
+
+        int myMatrixP[][] = new int [m][m];
         int myMatrixQ[][] = new int[m][m];
 
         for (c = 0; c < m; c++) {
@@ -101,14 +103,15 @@ public class MatrixMultiplication {
         for (i = 0; i<m; i++) {
             for (int j = 0; j < myMatrixB[0].length; j++) {
                 for (int k = 0; k < myMatrixA[0].length; k++) {
-                    myMatrixD[i][j] += myMatrixA[i][k] * myMatrixB[k][j];
+                    myMatrixP[i][j] += myMatrixA[i][k] * myMatrixB[k][j];
                 }
             }
         }
+
         for (i = 0; i<m; i++) {
-            for (int j = 0; j < myMatrixD[0].length; j++) {
+            for (int j = 0; j < myMatrixP[0].length; j++) {
                 for (int k = 0; k < myMatrixC[0].length; k++) {
-                    myMatrixQ[i][j] += myMatrixD[i][k] * myMatrixC[k][j];
+                    myMatrixQ[i][j] += myMatrixP[i][k] * myMatrixC[k][j];
                 }
             }
         }
@@ -123,9 +126,9 @@ public class MatrixMultiplication {
         System.out.println();
         System.out.println();
 
-        for(m = 0; m < myMatrixD.length; m++) {
-            for( n = 0; n < myMatrixD[0].length; n++) {
-                System.out.print(myMatrixD[m][n] + " ");
+        for(c = 0; c < m; c++) {
+            for( d = 0; d < m; d++) {
+                System.out.print(myMatrixE[c][d] + " ");
             }
             System.out.println();
         }
